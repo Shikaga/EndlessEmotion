@@ -7,7 +7,7 @@ class ChatGPTHandler {
         this.prompts = [];
     }
 
-    async getChatGPTResponse(prompts) {
+    async callChatGPTAPIWithPromptsArray(prompts) {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
             "model": "gpt-3.5-turbo",
             "messages": prompts,
@@ -20,6 +20,7 @@ class ChatGPTHandler {
         });
 
         let responseContent = response.data.choices[0].message.content;
+        global.logger.info(responseContent);
         return responseContent;
     }
 }
