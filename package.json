@@ -4,7 +4,8 @@
   "description": "AI Radio",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "inspect": "mocha --inspect-brk"
   },
   "author": "",
   "license": "ISC",
