@@ -148,4 +148,35 @@ describe('ChatGPT', function () {
         // Verify that the response from your code matches the mock response
         expect(response).to.equal('This is a mock response from the ChatGPT API.');
     });
+
+    //it should return messages with message and song and title when given this text
+//     Ladies and gentlemen, this is Fernando on Emotion 98.3 and I have a perfect track to get us in the mood for a little romance. It's "Careless Whisper" by George Michael.---
+// "Careless Whisper" by George Michael.
+
+    it('should return messages with message and song and title when given this text', async function () {
+        const mockResponse = {
+            data: {
+                choices: [{
+                    message: {
+                        content: `Ladies and gentlemen, this is Fernando on Emotion 98.3 and I have a perfect track to get us in the mood for a little romance. It's "Careless Whisper" by George Michael.---
+                        "Careless Whisper" by George Michael.`
+                    }
+                }]
+            }
+        };
+
+        axiosStub = sinon.stub(axios, 'post').resolves(mockResponse);
+
+        let chatGPT = new ChatGPTHandler();
+
+        // Call your code that uses the ChatGPT API
+        const response = await chatGPT.getNextMessage();
+
+        // Verify that the response from your code matches the mock response
+        expect(response.message).to.equal(`Ladies and gentlemen, this is Fernando on Emotion 98.3 and I have a perfect track to get us in the mood for a little romance. It's "Careless Whisper" by George Michael.`);
+        expect(response.song).to.equal(`Careless Whisper`);
+        expect(response.artist).to.equal(`George Michael`);
+
+
+    });
 });
