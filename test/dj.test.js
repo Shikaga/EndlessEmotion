@@ -14,7 +14,7 @@ describe('DJ', function() {
         };
 
         elevenLabsMock = {
-            getAudioFromDialog: sinon.stub().resolves({"audio": "audio", "duration": 180})
+            getAudioFromDialog: sinon.stub().resolves({"location": "audio", "duration": 180})
         };
 
         let spotifyStub = sinon.stub();
@@ -69,8 +69,8 @@ describe('DJ', function() {
 
         //verify that the audioLocation and time to play for 5 seconds from now was persisted
         let currentValues = await dj.getCurrentValues();
-        expect(currentValues.audioLocation).to.equal(`audio`);
-        expect(currentValues.timeToPlay).to.be.closeTo(Date.now() + 5000, 100);
+        expect(currentValues.dialogLocation).to.equal(`audio`);
+        expect(currentValues.dialogStart).to.be.closeTo(Date.now() + 5000, 100);
         expect(currentValues.trackURI).to.equal(`trackURI`);
         expect(currentValues.trackStart).to.be.closeTo(Date.now() + 180 * 1000, 100);
     });
@@ -80,8 +80,8 @@ describe('DJ', function() {
         // await dj.begin();
 
         dj.currentValues = {
-            audioLocation: "audio",
-            timeToPlay: Date.now() + 5000,
+            dialogLocation: "audio",
+            dialogStart: Date.now() + 5000,
             trackURI: "trackURI",
             trackStart: Date.now() + 180 * 1000
         }
@@ -93,8 +93,8 @@ describe('DJ', function() {
         const data = fs.readFileSync("logs/test.json");
         let json = JSON.parse(data);
         const currentValue = json.current;
-        expect(currentValue.audioLocation).to.equal(`audio`);
-        expect(currentValue.timeToPlay).to.be.closeTo(Date.now() + 5000, 100);
+        expect(currentValue.dialogLocation).to.equal(`audio`);
+        expect(currentValue.dialogStart).to.be.closeTo(Date.now() + 5000, 100);
         expect(currentValue.trackURI).to.equal(`trackURI`);
         expect(currentValue.trackStart).to.be.closeTo(Date.now() + 180 * 1000, 100);
     });
@@ -104,8 +104,8 @@ describe('DJ', function() {
         // await dj.begin();
 
         dj.nextValues = {
-            audioLocation: "audio2",
-            timeToPlay: Date.now() + 5000,
+            dialogLocation: "audio2",
+            dialogStart: Date.now() + 5000,
             trackURI: "trackURI2",
             trackStart: Date.now() + 180 * 1000
         }
@@ -117,8 +117,8 @@ describe('DJ', function() {
         const data = fs.readFileSync("logs/test.json");
         let json = JSON.parse(data);
         const nextValue = json.next;
-        expect(nextValue.audioLocation).to.equal(`audio2`);
-        expect(nextValue.timeToPlay).to.be.closeTo(Date.now() + 5000, 100);
+        expect(nextValue.dialogLocation).to.equal(`audio2`);
+        expect(nextValue.dialogStart).to.be.closeTo(Date.now() + 5000, 100);
         expect(nextValue.trackURI).to.equal(`trackURI2`);
         expect(nextValue.trackStart).to.be.closeTo(Date.now() + 180 * 1000, 100);
     });
@@ -132,8 +132,8 @@ describe('DJ', function() {
         const data = fs.readFileSync("logs/test.json");
         let json = JSON.parse(data);
         const currentValue = json.current;
-        expect(currentValue.audioLocation).to.equal(`audio`);
-        expect(currentValue.timeToPlay).to.be.closeTo(Date.now() + 5000, 100);
+        expect(currentValue.dialogLocation).to.equal(`audio`);
+        expect(currentValue.dialogStart).to.be.closeTo(Date.now() + 5000, 100);
         expect(currentValue.trackURI).to.equal(`trackURI`);
         expect(currentValue.trackStart).to.be.closeTo(Date.now() + 180 * 1000, 100);
     });

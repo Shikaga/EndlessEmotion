@@ -18,7 +18,10 @@ global.logger = winston.createLogger({
 async function callElevenLabsAPI() {
     let elevenLabs = new ElevenLabsHandler();
     let audio = await elevenLabs.getAudioFromDialog("Hello! You are testing 11 labs!");
-    audio.pipe(fs.createWriteStream('test.mp3'));
+    //save audio to file
+    const fs = require('fs');
+    const file = fs.createWriteStream("testAudio.mp3");
+
 }
 
 callElevenLabsAPI();

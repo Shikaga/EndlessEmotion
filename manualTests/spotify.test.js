@@ -16,16 +16,9 @@ global.logger = winston.createLogger({
     ]
 });
 
-let currentToken = "BQBKxwEmIJHC4F8aFIEWe8o0-I8Di8P3sJwYRWHoMc7iLRtuepo4_17lFDZUz3UJI1G4JQ5Q7_1L9eGtdrApIDtF-cBgtxTtXGkw5WgLrSb48dvvwq1Lvk6SJgbvKHymdWwZlPUlW5OG3BhAWDT4MuAe--w0UW5vgx45cWteRFEDnnRZc8lOixdKozzqYZMCs9NPdw"
-
+let currentToken = "BQArsUhZV7lYPV1oJFi0SfPogvJ56gXsfpntCeuOqsMiTM9lvXShKrdi9kqEiSv1wH6LzZb1d9UTwvyRSJ13OzGZvuFQaw04hraU9lOVwjUMRuyoZtH_HnrEZUcKtBrJLzTX8rzy2qbw0Cly7jw73HpynRkcQj3aeZ916tL4e9pmrI4CXERke4_Uk4knV5--aZT-fQ";
 async function testSpotifyAPI() {
-    let spotifyMock = {
-        Player: sinon.stub().returns({
-            addListener() { },
-            connect() { },
-        })
-    }
-    let spotifyHandler = new SpotifyHandler(spotifyMock, currentToken);
+    let spotifyHandler = new SpotifyHandler(currentToken);
 
     let response = await spotifyHandler.searchTrackInfo("Yesterday", "The Beatles");
     console.log(response);
