@@ -11,7 +11,6 @@ class DJ {
     Can you please tell me segue into a song straight away, don't say "Of course" or anything like that? 
     Don't forget to introduce yourself. And whatever you do DO NOT play Careless Whisper. `
         this.followUp = "Perfect, can you segue into a new song?";
-        this.currentChatGPTValues = {};
         this.currentValues = {};
         this.nextValues = null;
         this.peristsFile = peristsFile;
@@ -28,7 +27,6 @@ class DJ {
         //Repeat the above
         //Set a timer to Repeat again after the current song has finished.
 
-        debugger;
         console.log("Getting first next values")
         this.nextValues = await this.getAllValuesFromPrompt(this.followUp, this.currentValues.trackEnd-10000);
         await this.peristFile();
@@ -68,33 +66,19 @@ class DJ {
         if (startFrom == null) {
             startFrom = Date.now();
         }
-        console.log("XXX");
-        this.currentChatGPTValues = await this.chatGPTHandler.getNextMessage(prompt);
 
-        console.log("YYY");
-        this.audio = await this.elevenLabsHandler.getAudioFromDialog(this.currentChatGPTValues.message);
+        let nextMessage = await this.chatGPTHandler.getNextMessage(prompt);
+        this.audio = await this.elevenLabsHandler.getAudioFromDialog(nextMessage.message);
+        this.trackInfo = await this.spotifyHandler.searchTrackInfo(nextMessage.song, nextMessage.artist);
 
-        console.log("ZZZ");
-            //Store the Eleven Labs Audio when returned
-        debugger;
 
-        this.trackInfo = null;
-        
-        let retries = 5;
-        while(retries > 0  && this.trackInfo == null) {
-            retries--;
-            console.log("Retries", retries)
-            console.log("Searching for track info");
-            console.log(this.currentChatGPTValues);
-            this.trackInfo = await this.spotifyHandler.searchTrackInfo(this.currentChatGPTValues.song, this.currentChatGPTValues.artist);
-        }
 
-        if (retries == 0) {
-            console.log("Could not find track info for", this.currentChatGPTValues.song, this.currentChatGPTValues.artist);
-            global.logger.error("Could not find track info for", this.currentChatGPTValues.song, this.currentChatGPTValues.artist);
+        if (this.trackInfo == null) {
+            console.log("Could not find track info for", nextMessage.song, nextMessage.artist);
+            global.logger.error("Could not find track info for", nextMessage.song, nextMessage.artist);
+            global.logger.error("Picking a new request", prompt);
+            //chatGPTMustForgetItsLastMessages();
             return this.getAllValuesFromPrompt(prompt, startFrom);
-        } else {
-            console.log(retries);
         }
 
 
@@ -120,11 +104,6 @@ class DJ {
             next: this.nextValues
         }
         await fs.writeFileSync(this.peristsFile, JSON.stringify(data));
-    }
-
-    getLastChatGPTValues() {
-        return this.currentChatGPTValues;
-        //Get the current song from the database
     }
 
     getCurrentValues() {
