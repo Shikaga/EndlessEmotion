@@ -3,11 +3,17 @@ class DJ {
         this.chatGPTHandler = chatGPTHandler;
         this.elevenLabsHandler = elevenLabsHandler;
         this.spotifyHandler = spotifyHandler;
-        this.primer = "primer";
-        this.followUp = "followUp";
+        this.primer = `Generate text as though you were Fernando from the Radio Station Emotion 98.3 in GTA Vice City.
+        Return a response where the first line is your message and the second line is the ONLY the song you want to play.
+        Separate the lines with a "---" (three dashes) string.
+        Separate the song and the artist with "by".
+        Include the name of the song in your message in the first line.
+    Can you please tell me segue into a song straight away, don't say "Of course" or anything like that? 
+    Don't forget to introduce yourself. And whatever you do DO NOT play Careless Whisper. `
+        this.followUp = "Perfect, can you segue into a new song?";
         this.currentChatGPTValues = {};
         this.currentValues = {};
-        this.nextValues = {};
+        this.nextValues = null;
         this.peristsFile = peristsFile;
     }
 
@@ -18,29 +24,91 @@ class DJ {
         global.logger.info("DJ got the next values", this.currentValues);
 
         await this.peristFile();
-        //Wait till all returned
-        //Persist"
-            //the audioLocation and time to play for 5 seconds from now
-            //the song ID and the time to start 5 seconds before the audio would end
-        
+
         //Repeat the above
         //Set a timer to Repeat again after the current song has finished.
+
+        debugger;
+        console.log("Getting first next values")
+        this.nextValues = await this.getAllValuesFromPrompt(this.followUp, this.currentValues.trackEnd-10000);
+        await this.peristFile();
+        console.log("Got first next values and persisted file");
+
+        let timeUntilCurrentSongExpires = this.currentValues.trackEnd - Date.now();
+        console.log("timeUntilCurrentSongExpires 1", timeUntilCurrentSongExpires);
+        setTimeout(() => {
+            this.songFinished();
+        }, timeUntilCurrentSongExpires);
+        
     }
 
-    async getAllValuesFromPrompt(prompt) {
+    async songFinished() {
+        console.log("We think the song has finished")
+        this.currentValues = this.nextValues;
+        this.nextValues = null;
+        console.log("Set next to current and cleared next");
+        await this.peristFile();
+        console.log("Persisted file");
+
+        let timeUntilCurrentSongExpires = this.currentValues.trackEnd - Date.now();
+        console.log("timeUntilCurrentSongExpires", timeUntilCurrentSongExpires);
+        
+        console.log("Getting next values")
+        this.nextValues = await this.getAllValuesFromPrompt(this.followUp, this.currentValues.trackEnd-10000);
+        console.log("Got next values")
+        await this.peristFile();
+        console.log("Persisted file with next values");
+
+        setTimeout(() => {
+            this.songFinished();
+        }, timeUntilCurrentSongExpires);
+    }
+
+    async getAllValuesFromPrompt(prompt, startFrom) {
+        if (startFrom == null) {
+            startFrom = Date.now();
+        }
+        console.log("XXX");
         this.currentChatGPTValues = await this.chatGPTHandler.getNextMessage(prompt);
+
+        console.log("YYY");
         this.audio = await this.elevenLabsHandler.getAudioFromDialog(this.currentChatGPTValues.message);
+
+        console.log("ZZZ");
             //Store the Eleven Labs Audio when returned
-        this.trackInfo = await this.spotifyHandler.searchTrackInfo(this.currentChatGPTValues.song, this.currentChatGPTValues.artist);
- 
+        debugger;
+
+        this.trackInfo = null;
+        
+        let retries = 5;
+        while(retries > 0  && this.trackInfo == null) {
+            retries--;
+            console.log("Retries", retries)
+            console.log("Searching for track info");
+            console.log(this.currentChatGPTValues);
+            this.trackInfo = await this.spotifyHandler.searchTrackInfo(this.currentChatGPTValues.song, this.currentChatGPTValues.artist);
+        }
+
+        if (retries == 0) {
+            console.log("Could not find track info for", this.currentChatGPTValues.song, this.currentChatGPTValues.artist);
+            global.logger.error("Could not find track info for", this.currentChatGPTValues.song, this.currentChatGPTValues.artist);
+            return this.getAllValuesFromPrompt(prompt, startFrom);
+        } else {
+            console.log(retries);
+        }
+
+
+        let now = startFrom;
+        console.log("It is now", now);
+        console.log("The duration of the audio is", this.audio.duration);
         let values = {
             dialogLocation: this.audio.location,
-            dialogStart: Date.now() + 5000,
+            dialogStart: now + 5000,
             dialogLength: this.audio.duration,
-            dialogEnd: Date.now() + 5000 + this.audio.duration,
+            dialogEnd: now + 5000 + this.audio.duration*1000,
             trackURI: this.trackInfo.uri,
-            trackStart: Date.now() + this.audio.duration * 1000, //Because the audio will start in 5 seconds, this will start 5 seconds before the dialog ends
-            trackEnd: Date.now() + this.audio.duration * 1000 + this.trackInfo.duration_ms
+            trackStart: now + this.audio.duration * 1000, //Because the audio will start in 5 seconds, this will start 5 seconds before the dialog ends
+            trackEnd: now + this.audio.duration * 1000 + this.trackInfo.duration_ms
         }
         return values;
     }

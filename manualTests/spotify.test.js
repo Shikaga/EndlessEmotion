@@ -20,8 +20,11 @@ let currentToken = "BQArsUhZV7lYPV1oJFi0SfPogvJ56gXsfpntCeuOqsMiTM9lvXShKrdi9kqE
 async function testSpotifyAPI() {
     let spotifyHandler = new SpotifyHandler(currentToken);
 
-    let response = await spotifyHandler.searchTrackInfo("Yesterday", "The Beatles");
-    console.log(response);
+    // let response = await spotifyHandler.searchTrackInfo("Yesterday", "The Beatles");
+    // console.log(response);
+
+    let token = await spotifyHandler.getAccessToken();
+    console.log(token)
 }
 
 testSpotifyAPI();

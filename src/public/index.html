@@ -1,11 +1,63 @@
 <html>
-    <head>
-        <title>My App</title>
-        <script src="client.js"></script>
-        <script src="https://sdk.scdn.co/spotify-player.js"></script>
-    </head>
-    <body>
-        <h1>My App</h1>
-        <p>My App is a simple app that does something.</p>
-    </body>
+
+<head>
+    <title>My App</title>
+    <script type="module">
+        import { Client } from './client.js';
+        import { SpotifyClient } from './spotifyClient.js';
+
+
+        function getToken() {
+            var hash = window.location.hash.substring(1);
+            var token = hash.split('&')[0].split('=')[1];
+            return token;
+        }
+
+        let spotifyClient = new SpotifyClient(getToken());
+        let client = new Client("audioInfo.json", spotifyClient);
+
+        document.getElementById("startRadio").onclick = () => {
+            client.getAudioAndPlay();
+        }
+
+        document.getElementById("authenticate").onclick = () => {
+            var client_id = '68aa288b71004584b31b783b785b33fe';
+            var redirect_uri = 'http://localhost:3000';
+
+            var state = generateRandomString(16);
+
+            localStorage.setItem("stateKey", state);
+            var scope = 'user-read-private user-read-email streaming user-read-playback-state user-modify-playback-state';
+
+            var url = 'https://accounts.spotify.com/authorize';
+            url += '?response_type=token';
+            url += '&client_id=' + encodeURIComponent(client_id);
+            url += '&scope=' + encodeURIComponent(scope);
+            url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
+            url += '&state=' + encodeURIComponent(state);
+
+            //redirect to the url
+            window.location.href = url;
+        }
+
+        function generateRandomString(length) {
+            return Math.random().toString().substr(0, 16);
+        }
+
+    </script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script>
+        window.onSpotifyWebPlaybackSDKReady = () => {
+
+        }
+    </script>
+</head>
+
+<body>
+    <h1>My App</h1>
+    <p>My App is a simple app that does something.</p>
+    <button id="startRadio">Start Radio</button>
+    <button id="authenticate">Authenticate</button>
+</body>
+
 </html>

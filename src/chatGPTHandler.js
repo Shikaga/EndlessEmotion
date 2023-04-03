@@ -4,14 +4,6 @@ const config = require('../config');
 class ChatGPTHandler {
     constructor() {
         this.prompts = [];
-        this.initialMessage = `Generate text as though you were Fernando from the Radio Station Emotion 98.3 in GTA Vice City.
-        Return a response where the first line is your message and the second line is the song you want to play.
-        Separate the lines with a "---" (three dashes) string.
-        Separate the song and the artist with "by".
-        Include the name of the song in your message in the first line.
-    Can you please tell me segue into a song straight away, don't say "Of course" or anything like that? 
-    Don't forget to introduce yourself. `
-        this.followupMessage = "Perfect, can you segue into a new song?"
     }
 
     async callChatGPTAPIWithPromptsArray(prompts) {
@@ -41,8 +33,8 @@ class ChatGPTHandler {
         return response;
     }
 
-    async getNextMessage() {
-        let message = this.prompts.length == 0 ? this.initialMessage : this.followupMessage;
+    async getNextMessage(prompt) {
+        let message = prompt;
 
         let response = await this.sendMessage(message);
         let lines = response.split("---");

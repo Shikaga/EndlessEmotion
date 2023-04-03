@@ -77,8 +77,6 @@ class ElevenLabsHandler {
                   console.error(`Error getting file size: ${error.message}`);
                   return;
                 }
-
-                debugger;
               
                 const fileSize = stats.size;
                 const bitRate = 64; // default bit rate in kilobits per second
@@ -96,7 +94,6 @@ class ElevenLabsHandler {
 
     async getAudioFromDialog(dialog) {
         global.logger.info("ElevenLabsHandler: getAudioFromDialog with dialog: " + dialog);
-        debugger;
         try {
 
 
@@ -115,7 +112,6 @@ class ElevenLabsHandler {
             //     }
             // });
 
-            debugger;
             const options = {
                 hostname: 'api.elevenlabs.io',
                 port: 443,
@@ -132,8 +128,6 @@ class ElevenLabsHandler {
             let uniqueFileLocation = 'src/public/' + uniqueFilename;
 
             await this.makeHttpRequest(options, dialog, uniqueFileLocation);
-
-            debugger;
 
             // req.on('error', error => {
             //     global.logger.error(error)
@@ -154,7 +148,7 @@ class ElevenLabsHandler {
             global.logger.info("ElevenLabsHandler: getAudioFromDialog duration: " + duration);
 
             return {
-                location: 'filename.mpeg',
+                location: uniqueFilename,
                 duration
             }
             // const audioData = await response.data;

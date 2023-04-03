@@ -10,7 +10,7 @@ describe('DJ', function() {
     this.beforeEach(function() {
         //create a chatGPTHandler mock
         chatGPTHandlerMock = {
-            getNextMessage: sinon.stub().resolves({message: "My Message", song: "Careless Whisper", artist: "George Michael"})
+            getNextMessage: sinon.stub().resolves({message: "My Message", song: "Careless Whisper", artist: "George Michael", duration_ms: 180000})
         };
 
         elevenLabsMock = {
@@ -18,8 +18,8 @@ describe('DJ', function() {
         };
 
         let spotifyStub = sinon.stub();
-        spotifyStub.onCall(0).resolves({uri: "trackURI", duration: "trackStart"});
-        spotifyStub.onCall(1).resolves({uri: "trackURI2", duration: "trackStart2"});
+        spotifyStub.onCall(0).resolves({uri: "trackURI", duration_ms: 180000});
+        spotifyStub.onCall(1).resolves({uri: "trackURI2", duration_ms: 180000});
 
         spotifyMock = {
             searchTrackInfo: spotifyStub
