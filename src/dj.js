@@ -17,27 +17,31 @@ class DJ {
     }
 
     async begin() {
+        await this.getFirstValues();
+        await this.getSecondValues();
+
+        let timeUntilCurrentSongExpires = this.currentValues.trackEnd - Date.now();
+        console.log("timeUntilCurrentSongExpires 1", timeUntilCurrentSongExpires);
+
+        setTimeout(() => {
+            this.songFinished();
+        }, timeUntilCurrentSongExpires);
+    }
+
+    async getFirstValues() {
         global.logger.info("DJ is starting");
         this.currentValues = await this.getAllValuesFromPrompt(this.primer);
         global.logger.info("DJ has finished the primer");
         global.logger.info("DJ got the next values", this.currentValues);
 
         await this.peristFile();
+    }
 
-        //Repeat the above
-        //Set a timer to Repeat again after the current song has finished.
-
+    async getSecondValues() {
         console.log("Getting first next values")
         this.nextValues = await this.getAllValuesFromPrompt(this.followUp, this.currentValues.trackEnd-10000);
         await this.peristFile();
         console.log("Got first next values and persisted file");
-
-        let timeUntilCurrentSongExpires = this.currentValues.trackEnd - Date.now();
-        console.log("timeUntilCurrentSongExpires 1", timeUntilCurrentSongExpires);
-        setTimeout(() => {
-            this.songFinished();
-        }, timeUntilCurrentSongExpires);
-        
     }
 
     async songFinished() {
@@ -50,6 +54,12 @@ class DJ {
 
         let timeUntilCurrentSongExpires = this.currentValues.trackEnd - Date.now();
         console.log("timeUntilCurrentSongExpires", timeUntilCurrentSongExpires);
+
+        if (!(timeUntilCurrentSongExpires < 0)) {
+            console.log("timeUntilCurrentSongExpires is NaN, retrying in 10 seconds");
+            timeUntilCurrentSongExpires = 10000;
+        }
+
         
         console.log("Getting next values")
         this.nextValues = await this.getAllValuesFromPrompt(this.followUp, this.currentValues.trackEnd-10000);
@@ -62,7 +72,10 @@ class DJ {
         }, timeUntilCurrentSongExpires);
     }
 
-    async getAllValuesFromPrompt(prompt, startFrom) {
+    async getAllValuesFromPrompt(prompt, startFrom, retryCount = 0) {
+        if (retryCount > 5) {
+            throw new Error("Too many retries");
+        }
         if (startFrom == null) {
             startFrom = Date.now();
         }
@@ -78,7 +91,7 @@ class DJ {
             global.logger.error("Asking ChatGPTHandler to forget the last message");
             this.chatGPTHandler.forgetLastMessage();
             global.logger.error("Picking a new request", prompt, startFrom);
-            return this.getAllValuesFromPrompt(prompt, startFrom);
+            return this.getAllValuesFromPrompt(prompt, startFrom, retryCount++);
         }
 
 

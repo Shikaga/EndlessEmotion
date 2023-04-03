@@ -41,13 +41,13 @@ describe('DJ', function() {
 
     it('should send the primer as its first message', async function () {
         const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock, "logs/test.json");
-        await dj.begin();
+        await dj.getFirstValues();
         expect(chatGPTHandlerMock.getNextMessage.calledWith(dj.primer)).to.be.true;
     });
 
     it('should send the message to elevenLabs', async function () {
         const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock, "logs/test.json");
-        await dj.begin();
+        await dj.getFirstValues();
 
         //verify that elevenLabs was called with the correct message
         expect(elevenLabsMock.getAudioFromDialog.calledWith("My Message")).to.be.true;
@@ -55,7 +55,7 @@ describe('DJ', function() {
 
     it('should find the track information from spotify', async function () {
         const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock,  "logs/test.json");
-        await dj.begin();
+        await dj.getFirstValues();
 
         //verify that spotify was called with the correct message
         expect(spotifyMock.searchTrackInfo.calledWith("Careless Whisper", "George Michael")).to.be.true;
@@ -63,7 +63,7 @@ describe('DJ', function() {
 
     it('should save the current values', async function () {
         const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock, "logs/test.json");
-        await dj.begin();
+        await dj.getFirstValues();
 
         //verify that the audioLocation and time to play for 5 seconds from now was persisted
         let currentValues = await dj.getCurrentValues();
@@ -123,7 +123,8 @@ describe('DJ', function() {
 
     it('should persist the current values when begin called', async function () {
         const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock, "logs/test.json");
-        await dj.begin();
+        debugger;
+        await dj.getFirstValues();
 
         //get test.json and verify that it contains the correct values
         const fs = require('fs');
