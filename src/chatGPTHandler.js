@@ -51,6 +51,13 @@ class ChatGPTHandler {
         let restOfMessage = lines[0];
         return {message: restOfMessage, song: song, artist: artist}
     }
+
+    forgetLastMessage() {
+        let message  = this.prompts.pop();
+        global.logger.error("Forgetting last message", message);
+        message = this.prompts.pop();
+        global.logger.error("Forgetting last message", message);
+    }
 }
 
 exports.ChatGPTHandler = ChatGPTHandler;

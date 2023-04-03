@@ -71,13 +71,13 @@ class DJ {
         this.audio = await this.elevenLabsHandler.getAudioFromDialog(nextMessage.message);
         this.trackInfo = await this.spotifyHandler.searchTrackInfo(nextMessage.song, nextMessage.artist);
 
-
-
         if (this.trackInfo == null) {
             console.log("Could not find track info for", nextMessage.song, nextMessage.artist);
             global.logger.error("Could not find track info for", nextMessage.song, nextMessage.artist);
-            global.logger.error("Picking a new request", prompt);
             //chatGPTMustForgetItsLastMessages();
+            global.logger.error("Asking ChatGPTHandler to forget the last message");
+            this.chatGPTHandler.forgetLastMessage();
+            global.logger.error("Picking a new request", prompt, startFrom);
             return this.getAllValuesFromPrompt(prompt, startFrom);
         }
 

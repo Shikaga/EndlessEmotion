@@ -176,7 +176,77 @@ describe('ChatGPT', function () {
         expect(response.message).to.equal(`Ladies and gentlemen, this is Fernando on Emotion 98.3 and I have a perfect track to get us in the mood for a little romance. It's "Careless Whisper" by George Michael.`);
         expect(response.song).to.equal(`Careless Whisper`);
         expect(response.artist).to.equal(`George Michael`);
-
-
     });
+
+    it('should be able to forget its last message and remove response too', async function () {
+        const mockResponse = {
+            data: {
+                choices: [{
+                    message: {
+                        content: 'This is a mock response from the ChatGPT API.'
+                    }
+                }]
+            }
+        };
+
+        axiosStub = sinon.stub(axios, 'post').resolves(mockResponse);
+
+        let chatGPT = new ChatGPTHandler();
+
+        // Call your code that uses the ChatGPT API
+        await chatGPT.sendMessage("Test");
+        await chatGPT.sendMessage("Test2");
+
+        //message sent should be wrapped
+        expect(axiosStub.calledWith('https://api.openai.com/v1/chat/completions', {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": "Test"}],
+            "temperature": 0.7
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': sinon.match.any
+            }
+        })).to.be.true;
+
+        expect(axiosStub.calledWith('https://api.openai.com/v1/chat/completions', {
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                {"role": "user", "content": "Test"},
+                {"role": "assistant", "content": "This is a mock response from the ChatGPT API."},
+                {"role": "user", "content": "Test2"}
+            ],
+            "temperature": 0.7
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': sinon.match.any
+            }
+        })).to.be.true;
+
+        chatGPT.forgetLastMessage();
+        const response = await chatGPT.sendMessage("Test3");
+
+        expect(axiosStub.calledWith('https://api.openai.com/v1/chat/completions', {
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                {"role": "user", "content": "Test"},
+                {"role": "assistant", "content": "This is a mock response from the ChatGPT API."},
+                {"role": "user", "content": "Test3"}
+            ],
+            "temperature": 0.7
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': sinon.match.any
+            }
+        })).to.be.true;
+
+
+
+        // Verify that the response from your code matches the mock response
+        expect(response).to.equal('This is a mock response from the ChatGPT API.');
+    });
+
+    
 });
