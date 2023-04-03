@@ -16,15 +16,13 @@ global.logger = winston.createLogger({
     ]
 });
 
-let currentToken = "BQArsUhZV7lYPV1oJFi0SfPogvJ56gXsfpntCeuOqsMiTM9lvXShKrdi9kqEiSv1wH6LzZb1d9UTwvyRSJ13OzGZvuFQaw04hraU9lOVwjUMRuyoZtH_HnrEZUcKtBrJLzTX8rzy2qbw0Cly7jw73HpynRkcQj3aeZ916tL4e9pmrI4CXERke4_Uk4knV5--aZT-fQ";
 async function testSpotifyAPI() {
-    let spotifyHandler = new SpotifyHandler(currentToken);
+    let spotifyHandler = new SpotifyHandler();
+    let response = await spotifyHandler.searchTrackInfo("Hotel California", "The Eagles");
+    console.log(response);
 
-    // let response = await spotifyHandler.searchTrackInfo("Yesterday", "The Beatles");
-    // console.log(response);
-
-    let token = await spotifyHandler.getAccessToken();
-    console.log(token)
+    // let token = await spotifyHandler.getAccessToken();
+    // console.log(token)
 }
 
 testSpotifyAPI();

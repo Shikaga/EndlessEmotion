@@ -13,9 +13,13 @@ class SpotifyHandler {
             global.logger.info(`Searching for ${song} by ${artist}`);
             let accessToken = await this.getAccessToken();
             let query = `track:${song} artist:${artist}`;
+            query = `${song} ${artist}` //Turns out Fernando doesn't know the correct names for songs and artists so it is worth letting spotify do the searching
+            query = query.replace(/ /g, "%20");
+
+
     
             console.log(accessToken)
-            const response = await axios.get(`https://api.spotify.com/v1/search?type=track&limit=1&q=${query}`, {
+            const response = await axios.get(`https://api.spotify.com/v1/search?type=track&limit=10&q=${query}`, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
@@ -31,12 +35,22 @@ class SpotifyHandler {
         }
     }
 
-    getAccessToken() {
-        return this.accessToken;
+    async getAccessToken() {
+        return new Promise((resolve, reject) => {
+            if (this.accessToken) {
+                resolve(this.accessToken);
+            } else {
+                let interval = setInterval(() => {
+                    if (this.accessToken) {
+                        clearInterval(interval);
+                        resolve(this.accessToken);
+                    }
+                }, 1000);
+            }
+        });
     }
 
     async initToken() {
-
         return new Promise((resolve, reject) => {
             const clientId = config.spotifyClientId;
             const clientSecret = config.spotifyClientSecret;
