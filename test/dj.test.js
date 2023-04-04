@@ -34,9 +34,6 @@ describe('DJ', function() {
         if (fs.existsSync('logs/test.json')) {
             fs.unlinkSync('logs/test.json');
         }
-
-
-
     });
 
     it('should send the primer as its first message', async function () {
@@ -123,7 +120,6 @@ describe('DJ', function() {
 
     it('should persist the current values when begin called', async function () {
         const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock, "logs/test.json");
-        debugger;
         await dj.getFirstValues();
 
         //get test.json and verify that it contains the correct values
@@ -135,5 +131,21 @@ describe('DJ', function() {
         expect(currentValue.dialogStart).to.be.closeTo(Date.now() + 5000, 100);
         expect(currentValue.trackURI).to.equal(`trackURI`);
         expect(currentValue.trackStart).to.be.closeTo(Date.now() + 180 * 1000, 100);
+    });
+
+    it('should set the timeout time to 10 seconds when NaN', async function () {
+        const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock, "logs/test.json");
+        
+        let safeTime = dj.getSafeRetryTime(1000);
+        expect(safeTime).to.equal(1000);
+
+        safeTime = dj.getSafeRetryTime(0);
+        expect(safeTime).to.equal(10000);
+
+        safeTime = dj.getSafeRetryTime(-1000);
+        expect(safeTime).to.equal(10000);
+        
+        safeTime = dj.getSafeRetryTime(NaN);
+        expect(safeTime).to.equal(10000);
     });
 })

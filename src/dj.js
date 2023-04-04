@@ -44,6 +44,14 @@ class DJ {
         console.log("Got first next values and persisted file");
     }
 
+    getSafeRetryTime(timeUntilCurrentSongExpires) {
+        if (!(timeUntilCurrentSongExpires > 0)) {
+            console.log("timeUntilCurrentSongExpires is NaN, retrying in 10 seconds");
+            timeUntilCurrentSongExpires = 10000;
+        }
+        return timeUntilCurrentSongExpires;
+    }
+
     async songFinished() {
         console.log("We think the song has finished")
         this.currentValues = this.nextValues;
@@ -55,10 +63,7 @@ class DJ {
         let timeUntilCurrentSongExpires = this.currentValues.trackEnd - Date.now();
         console.log("timeUntilCurrentSongExpires", timeUntilCurrentSongExpires);
 
-        if (!(timeUntilCurrentSongExpires < 0)) {
-            console.log("timeUntilCurrentSongExpires is NaN, retrying in 10 seconds");
-            timeUntilCurrentSongExpires = 10000;
-        }
+        timeUntilCurrentSongExpires = this.getSafeRetryTime(timeUntilCurrentSongExpires);
 
         
         console.log("Getting next values")
