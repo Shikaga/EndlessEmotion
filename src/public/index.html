@@ -14,6 +14,11 @@
         }
 
         let spotifyClient = new SpotifyClient(getToken());
+
+        spotifyClient.getListOfDevices().then((devices) => {
+            console.log(devices);
+        });
+
         let client = new Client("audioInfo.json", spotifyClient);
 
         document.getElementById("startRadio").onclick = () => {
@@ -56,8 +61,11 @@
 <body>
     <h1>My App</h1>
     <p>My App is a simple app that does something.</p>
-    <button id="startRadio">Start Radio</button>
     <button id="authenticate">Authenticate</button>
+    <select id="deviceList">
+    </select>
+
+    <button id="startRadio">Start Radio</button>
 </body>
 
 </html>
