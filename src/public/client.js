@@ -85,7 +85,7 @@ export class Client {
     async playCurrentDialog() {
         let dialog = this.current;
         let now = Date.now();
-        console.log(now-this.current.dialogStart, now-this.current.dialogEnd)
+        console.log(now - this.current.dialogStart, now - this.current.dialogEnd)
         if (now > this.current.dialogStart && now < this.current.dialogEnd) {
             let timeSinceDialogStart = this.getTimeSinceAudioStart(this.current.dialogStart);
             const audio = new Audio(dialog.dialogLocation);
@@ -103,6 +103,12 @@ export class Client {
         if (now > this.current.trackStart && now < this.current.trackEnd) {
             let timeSinceTrackStart = this.getTimeSinceAudioStart(this.current.trackStart);
             this.clientSpotify.playSong(song.trackURI, timeSinceTrackStart);
+        } else if (this.current.trackStart > now) {
+            let timeUntilTrackStart = this.current.trackStart - now;
+            console.log("Playing current song in", timeUntilTrackStart, "ms");
+            setTimeout(() => {
+                this.clientSpotify.playSong(song.trackURI, 0);
+            }, timeUntilTrackStart);
         }
     }
 
