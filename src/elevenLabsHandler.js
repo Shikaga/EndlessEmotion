@@ -7,6 +7,7 @@ const ID3 = require('node-id3');
 class ElevenLabsHandler {
     constructor() {
         this.name = 'eleven-labs';
+        this.dialogFolder = 'src/public/dialogs/';
     }
 
     async makeHttpRequest(options, dialog , fileName) {
@@ -50,27 +51,6 @@ class ElevenLabsHandler {
     async getAudioDuration(filename) {
 
         return new Promise((resolve, reject) => {
-            // setTimeout(() => {
-            //     fs.readFile(filename, (error, data) => {
-            //         if (error) {
-            //             console.error(`Error reading file: ${error.message}`);
-            //             return;
-            //         }
-    
-            //         const tags = ID3.read(data);
-    
-            //         if (tags && tags.duration) {
-            //             const duration = tags.duration;
-            //             console.log(`Duration: ${duration} seconds`);
-            //             resolve(duration);
-            //         } else {
-            //             console.error('Error getting audio duration');
-            //             reject();
-            //         }
-            //     });
-            // }, 500);
-            
-
             setTimeout(() => {
             fs.stat(filename, (error, stats) => {
                 if (error) {
@@ -95,23 +75,6 @@ class ElevenLabsHandler {
     async getAudioFromDialog(dialog) {
         global.logger.info("ElevenLabsHandler: getAudioFromDialog with dialog: " + dialog);
         try {
-
-
-            //convert this into http
-            // const response = await axios.post('https://api.elevenlabs.io/v1/text-to-speech/ciiwqQciM04m3gd8dgzl', {
-            //     "text": "hello" //dialog,
-            //     // "voice_settings": {
-            //     //     "stability": 0,
-            //     //     "similarity_boost": 0
-            //     // }
-            // }, {
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'xi-api-key': config.elevenLabsApiKey,
-            //         'accept': 'audio/mpeg',
-            //     }
-            // });
-
             const options = {
                 hostname: 'api.elevenlabs.io',
                 port: 443,
@@ -125,22 +88,9 @@ class ElevenLabsHandler {
             }
 
             let uniqueFilename = 'dialog' + Date.now() + '.mp3';
-            let uniqueFileLocation = 'src/public/' + uniqueFilename;
+            let uniqueFileLocation = this.dialogFolder + uniqueFilename;
 
             await this.makeHttpRequest(options, dialog, uniqueFileLocation);
-
-            // req.on('error', error => {
-            //     global.logger.error(error)
-            // })
-
-            // req.write(JSON.stringify({
-            //     "text": "hello"
-            // }))
-
-            // req.end()
-
-
-
 
             global.logger.info("ElevenLabsHandler: getAudioFromDialog response received");
 
@@ -151,23 +101,6 @@ class ElevenLabsHandler {
                 location: uniqueFilename,
                 duration
             }
-            // const audioData = await response.data;
-            // const audioData = await response.blob();
-            // const audioUrl = URL.createObjectURL(audioData);
-            // const audio = new Audio(audioUrl);
-
-            // await new Promise(resolve => {
-            //     audio.addEventListener('loadedmetadata', () => {
-            //         console.log(`Audio duration: ${audio.duration}`);
-            //         //setTimeout(() => {
-            //         resolve();
-            //         //}, audio.duration * 1000 - 3000);
-            //     });
-
-            // });
-
-
-            // return audio;
         } catch (error) {
             global.logger.error("ElevenLabsHandler: getAudioFromDialog error: " + error);
             if (error && error.response) {

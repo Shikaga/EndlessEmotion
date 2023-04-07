@@ -3,3 +3,4 @@ testLogs
 node_modules
 package-lock.json
 src/public/audioInfo.json
+src/public/dialogs
