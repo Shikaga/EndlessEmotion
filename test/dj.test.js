@@ -24,8 +24,8 @@ describe('DJ', function() {
         };
 
         let spotifyStub = sinon.stub();
-        spotifyStub.onCall(0).resolves({uri: "trackURI", duration_ms: 180000});
-        spotifyStub.onCall(1).resolves({uri: "trackURI2", duration_ms: 180000});
+        spotifyStub.onCall(0).resolves({uri: "trackURI", name: "songName", artists:[{name:"artistName"}], duration_ms: 180000});
+        spotifyStub.onCall(1).resolves({uri: "trackURI2", name: "songName", artists:[{name:"artistName"}], duration_ms: 180000});
 
         spotifyMock = {
             searchTrackInfo: spotifyStub
@@ -39,6 +39,7 @@ describe('DJ', function() {
 
     it('should send the followup as its first message', async function () {
         const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock, "logs/test.json");
+        debugger;
         await dj.getFirstValues();
         expect(chatGPTHandlerMock.getNextMessage.calledWith(dj.followUp)).to.be.true;
     });
