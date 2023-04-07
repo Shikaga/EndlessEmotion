@@ -77,8 +77,15 @@ export class Client {
         console.log("Next song must play at", new Date(song.trackStart));
         console.log("Playing new Song in", timeUntilSongStart, "ms");
         setTimeout(() => {
-            this.clientSpotify.playSong(song.trackURI, 0);
+            this.playSongNow(song);
         }, timeUntilSongStart);
+    }
+
+    async playSongNow(song, time = 0) {
+        //this.clientSpotify.playSong(song.trackURI, time);
+        document.getElementById("nowPlaying").style.display = "block";
+        document.getElementById("song").innerHTML = song.trackName;
+        document.getElementById("artist").innerHTML = song.trackArtist;
     }
 
 
@@ -102,12 +109,12 @@ export class Client {
         console.log("End", new Date(this.current.trackEnd));
         if (now > this.current.trackStart && now < this.current.trackEnd) {
             let timeSinceTrackStart = this.getTimeSinceAudioStart(this.current.trackStart);
-            this.clientSpotify.playSong(song.trackURI, timeSinceTrackStart);
+            this.playSongNow(song, timeSinceTrackStart);
         } else if (this.current.trackStart > now) {
             let timeUntilTrackStart = this.current.trackStart - now;
             console.log("Playing current song in", timeUntilTrackStart, "ms");
             setTimeout(() => {
-                this.clientSpotify.playSong(song.trackURI, 0);
+                this.playSongNow(song);
             }, timeUntilTrackStart);
         }
     }

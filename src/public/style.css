@@ -1,6 +1,25 @@
+@font-face {
+    font-family: "Rage";
+    src: url("fonts/rage-webfont.woff2") format("woff2"),
+         url("fonts/rage-webfont.woff") format("woff");
+  }
+
 html,
 body {
     height: 100%;
+    font-family: "Rage", sans-serif;
+}
+
+.nowPlaying {
+    position: absolute;
+    bottom: 10%;
+    font-size: 50px;
+    margin-left: 50px;
+    text-shadow: 1px 1px 0px #FFF, -1px -1px 0px #FFF, 1px -1px 0px #FFF, -1px 1px 0px #FFF;
+}
+
+.songInfo {
+    margin-left: 50px;
 }
 
 .parent {
