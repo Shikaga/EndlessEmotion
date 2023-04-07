@@ -3,6 +3,10 @@
 <head>
     <title>My App</title>
     <script type="module">
+        let authenticated = false;
+
+
+
         import { Client } from './client.js';
         import { SpotifyClient } from './spotifyClient.js';
 
@@ -13,21 +17,30 @@
             return token;
         }
 
+        function isAuthenticated() {
+            authenticated = true;
+            document.getElementById("centreButton").innerHTML = "Play";
+        }
+
         let spotifyClient = new SpotifyClient(getToken());
 
         spotifyClient.getListOfDevices().then((devices) => {
-            console.log(devices);
+            isAuthenticated();
         });
 
         let client = new Client("audioInfo.json", spotifyClient);
 
-        document.getElementById("startRadio").onclick = () => {
-            client.getAudioAndPlay();
+        document.getElementById("centreButton").onclick = () => {
+            if (authenticated) {
+                client.getAudioAndPlay();
+            } else {
+                authenticate();
+            }
         }
 
-        document.getElementById("authenticate").onclick = () => {
+        function authenticate() {
             var client_id = '68aa288b71004584b31b783b785b33fe';
-            var redirect_uri = 'http://localhost:3000';
+            var redirect_uri = getCurrentURL();
 
             var state = generateRandomString(16);
 
@@ -45,6 +58,12 @@
             window.location.href = url;
         }
 
+        function getCurrentURL() {
+            var port = window.location.port ? ':' + window.location.port : '';
+            const baseUrl = `${window.location.protocol}//${window.location.hostname}${port}`;
+            return baseUrl;
+        }
+
         function generateRandomString(length) {
             return Math.random().toString().substr(0, 16);
         }
@@ -56,16 +75,27 @@
 
         }
     </script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>My App</h1>
-    <p>My App is a simple app that does something.</p>
-    <button id="authenticate">Authenticate</button>
-    <select id="deviceList">
-    </select>
+    <img src="images/fernando.png" alt="Fernando" class="bottom-image">
 
-    <button id="startRadio">Start Radio</button>
+    <div class="parent">
+        <div class="radio">
+            <div class="screen">Radio Station</div>
+            <div class="button-group">
+                <button class="btn">&nbsp;</button>
+                <button class="btn">&nbsp;</button>
+                <button id="centreButton" class="btn btn-center">Auth</button>
+                <button class="btn">&nbsp;</button>
+                <button class="btn">&nbsp;</button>
+            </div>
+            <select class="btn dropdown" id="deviceList">
+            </select>
+        </div>
+    </div>
+    
 </body>
 
 </html>

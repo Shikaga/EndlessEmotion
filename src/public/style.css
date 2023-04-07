@@ -1,0 +1,79 @@
+html,
+body {
+    height: 100%;
+}
+
+.parent {
+    position: relative;
+    height: 100%;
+}
+
+.radio {
+    background-color: #3d3d3d;
+    border: 2px solid #ffcf00;
+    border-radius: 10px;
+    width: 400px;
+    height: 240px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10%;
+}
+
+.screen {
+    background-color: #fff;
+    color: #000;
+    border: 2px solid #ffcf00;
+    border-radius: 5px;
+    width: 90%;
+    height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.btn {
+    background-color: #ffcf00;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.dropdown {
+    width: 300px;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.btn-center {
+    width: 80px;
+    height: 40px;
+}
+
+.container {
+    min-height: 100%;
+    position: relative;
+}
+
+.bottom-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: -1;
+}
