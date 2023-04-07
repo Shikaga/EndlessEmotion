@@ -1,11 +1,31 @@
+const winston = require('winston');
 const axios = require('axios');
 const config = require('../config');
 const SpotifyWebApi = require('spotify-web-api-node');
 
 
+
 class SpotifyHandler {
     constructor() {
+        this.setupLogger();;
         this.initToken();
+    }
+
+    setupLogger() {
+
+        let uniqueLoggingFileName = 'spotify.log' + new Date().toISOString().replace(/:/g, '-');
+        let logFileDirectory = 'logs';
+        let logFilePath = logFileDirectory + '/' + uniqueLoggingFileName;
+
+        this.logger = winston.createLogger({
+            level: 'info',
+            format: winston.format.json(),
+            defaultMeta: { service: 'spotify-handler' },
+            transports: [
+                new winston.transports.File({ filename: logFilePath }),
+                new winston.transports.Console(),
+            ]
+        });
     }
 
     async searchTrackInfo(song, artist) {
@@ -15,20 +35,18 @@ class SpotifyHandler {
             let query = `track:${song} artist:${artist}`;
             query = `${song} ${artist}` //Turns out Fernando doesn't know the correct names for songs and artists so it is worth letting spotify do the searching
             query = query.replace(/ /g, "%20");
-
-
-    
-            console.log(accessToken)
             const response = await axios.get(`https://api.spotify.com/v1/search?type=track&limit=10&q=${query}`, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
             });
-    
+            
             const data = await response.data;
-            return data.tracks.items[0];
+            const track = data.tracks.items[0];
+            this.logger.info(`Searched for ${song} by ${artist} and found ${track.name} by ${track.artists[0].name}`);
+            debugger;
+            return track;
         } catch (error) {
-            console.error("Error", error);
             global.logger.error(`Error searching for ${song} by ${artist}`);
             global.logger.error(error);
             return null;
