@@ -82,7 +82,7 @@ export class Client {
     }
 
     async playSongNow(song, time = 0) {
-        //this.clientSpotify.playSong(song.trackURI, time);
+        this.clientSpotify.playSong(song.trackURI, time);
         document.getElementById("nowPlaying").style.display = "block";
         document.getElementById("song").innerHTML = song.trackName;
         document.getElementById("artist").innerHTML = song.trackArtist;
