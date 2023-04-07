@@ -7,6 +7,8 @@ const { ElevenLabsHandler } = require('./elevenLabsHandler');
 const { SpotifyHandler } = require('./spotifyHandler');
 const { DJ } = require('./dj');
 
+let feOnly;
+
 let uniqueLoggingFileName = 'app.log' + new Date().toISOString().replace(/:/g, '-');
 let logFileDirectory = 'logs';
 let logFilePath = logFileDirectory + '/' + uniqueLoggingFileName;
@@ -16,11 +18,20 @@ const logger = winston.createLogger({
     format: winston.format.json(),
     defaultMeta: { service: 'my-app' },
     transports: [
-        new winston.transports.File({ filename: logFilePath })
+        new winston.transports.File({ filename: logFilePath }),
+        new winston.transports.Console(),
     ]
 });
 
 global.logger = logger;
+
+if (process.argv.indexOf('--fe-only') > -1) {
+    logger.info('Running front-end only');
+    feOnly = true;
+} else {
+    logger.info('Running full stack');
+    feOnly = false;
+}
 
 // Log unhandled exceptions
 process.on('uncaughtException', (err) => {
@@ -65,4 +76,7 @@ function setupServer() {
 }
 
 setupExpressServer();
-setupServer();
+if (!feOnly) {
+    setupServer();
+}
+
