@@ -1,11 +1,12 @@
 export class SpotifyClient {
-    constructor() {
+    constructor(token) {
+        this.token = token;
         this.selectedDeviceId = null;
     }
 
     async getListOfDevices() {
         try {
-            const accessToken = await this.getAccessToken();
+            const accessToken = this.token;
             if (!accessToken) {
                 throw new Error('No access token');
             }
@@ -16,7 +17,7 @@ export class SpotifyClient {
                     'Content-Type': 'application/json'
                 },
             });
-            response.json().then(data => {
+            return response.json().then(data => {
                 let deviceList = document.getElementById("deviceList");
                 //create a list of devices
                 for (let i = 0; i < data.devices.length; i++) {
@@ -32,9 +33,12 @@ export class SpotifyClient {
                 deviceList.onchange = function () {
                     this.selectedDeviceId = deviceList.options[deviceList.selectedIndex].value;
                 }.bind(this);
+            })
+            .catch(error => {
+                throw new Error('Failed to get list of devices');
             });
         } catch (error) {
-            console.error('Error:', error.message);
+            throw new Error('Failed to get list of devices');
         }
     }
 
@@ -75,11 +79,5 @@ export class SpotifyClient {
         } catch (error) {
             console.error('Error:', error.message);
         }
-    }
-
-    async getAccessToken() {
-        var hash = window.location.hash.substring(1);
-        var token = hash.split('&')[0].split('=')[1];
-        return token;
     }
 }
