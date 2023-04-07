@@ -108,7 +108,9 @@ class DJ {
             dialogEnd: now + 5000 + this.audio.duration*1000,
             trackURI: this.trackInfo.uri,
             trackStart: now + this.audio.duration * 1000, //Because the audio will start in 5 seconds, this will start 5 seconds before the dialog ends
-            trackEnd: now + this.audio.duration * 1000 + this.trackInfo.duration_ms
+            trackEnd: now + this.audio.duration * 1000 + this.trackInfo.duration_ms,
+            trackName: this.trackInfo.name,
+            trackArtist: this.trackInfo.artists[0].name
         }
         return values;
     }
