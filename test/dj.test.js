@@ -10,6 +10,7 @@ describe('DJ', function() {
     this.beforeEach(function() {
         //create a chatGPTHandler mock
         chatGPTHandlerMock = {
+            setPrimer: sinon.stub(),
             getNextMessage: sinon.stub().resolves({
                 message: "My Message", 
                 song: "Careless Whisper", 
@@ -36,10 +37,10 @@ describe('DJ', function() {
         }
     });
 
-    it('should send the primer as its first message', async function () {
+    it('should send the followup as its first message', async function () {
         const dj = new DJ(chatGPTHandlerMock, elevenLabsMock, spotifyMock, "logs/test.json");
         await dj.getFirstValues();
-        expect(chatGPTHandlerMock.getNextMessage.calledWith(dj.primer)).to.be.true;
+        expect(chatGPTHandlerMock.getNextMessage.calledWith(dj.followUp)).to.be.true;
     });
 
     it('should send the message to elevenLabs', async function () {

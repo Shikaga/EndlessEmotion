@@ -10,6 +10,7 @@
         import { Client } from './client.js';
         import { SpotifyClient } from './spotifyClient.js';
         let spotifyClient = null;
+        let client = null;
 
         function setup() {
             storeAndRemoveToken();
@@ -23,7 +24,7 @@
                 console.log("You need to authenticate still");
             });
 
-            let client = new Client("audioInfo.json", spotifyClient);
+            client = new Client("audioInfo.json", spotifyClient);
         }
 
 

@@ -7,7 +7,8 @@ const ID3 = require('node-id3');
 class ElevenLabsHandler {
     constructor() {
         this.name = 'eleven-labs';
-        this.dialogFolder = 'src/public/dialogs/';
+        this.relativePath = 'src/public/';
+        this.dialogFolder = 'dialogs/';
     }
 
     async makeHttpRequest(options, dialog , fileName) {
@@ -89,16 +90,17 @@ class ElevenLabsHandler {
 
             let uniqueFilename = 'dialog' + Date.now() + '.mp3';
             let uniqueFileLocation = this.dialogFolder + uniqueFilename;
+            let absoluteFileLocation = this.relativePath + uniqueFileLocation;
 
-            await this.makeHttpRequest(options, dialog, uniqueFileLocation);
+            await this.makeHttpRequest(options, dialog, absoluteFileLocation);
 
             global.logger.info("ElevenLabsHandler: getAudioFromDialog response received");
 
-            const duration = await this.getAudioDuration(uniqueFileLocation);
+            const duration = await this.getAudioDuration(absoluteFileLocation);
             global.logger.info("ElevenLabsHandler: getAudioFromDialog duration: " + duration);
 
             return {
-                location: uniqueFilename,
+                location: uniqueFileLocation,
                 duration
             }
         } catch (error) {

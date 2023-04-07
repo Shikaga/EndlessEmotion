@@ -6,6 +6,10 @@ class ChatGPTHandler {
         this.prompts = [];
     }
 
+    setPrimer(primer) {
+        this.prompts.push({"role": "system", "content": primer});
+    }
+
     async callChatGPTAPIWithPromptsArray(prompts) {
         let duplicatePrompts = JSON.parse(JSON.stringify(prompts));
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
@@ -35,10 +39,9 @@ class ChatGPTHandler {
 
     async getNextMessage(prompt) {
         let message = prompt;
-
         let response = await this.sendMessage(message);
-        let lines = response.split("---");
-        let songArtist = lines[1];
+        let lines = response.split("\n");
+        let songArtist = lines[0];
         let song, artist;
         try {
             let songArtistSplit = songArtist.split("by")
@@ -48,7 +51,8 @@ class ChatGPTHandler {
             console.error("Error", error);
             song = songArtist;
         } 
-        let restOfMessage = lines[0];
+        //rest of lines are the message
+        let restOfMessage = lines.slice(1).map(line => line.trim()).join("");
         return {message: restOfMessage, song: song, artist: artist}
     }
 

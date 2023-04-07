@@ -158,8 +158,10 @@ describe('ChatGPT', function () {
             data: {
                 choices: [{
                     message: {
-                        content: `Ladies and gentlemen, this is Fernando on Emotion 98.3 and I have a perfect track to get us in the mood for a little romance. It's "Careless Whisper" by George Michael.---
-                        "Careless Whisper" by George Michael.`
+                        content: `"Careless Whisper" by George Michael.
+                        
+                        Ladies and gentlemen, this is Fernando on Emotion 98.3 and I have a perfect track to get us in the mood for a little romance. It's "Careless Whisper" by George Michael.
+                        `
                     }
                 }]
             }

@@ -46,7 +46,7 @@ export class SpotifyClient {
         console.log("Playing song: " + songUri);
         console.log("starting at: " + positionInMs)
         try {
-            const accessToken = await this.getAccessToken();
+            const accessToken = this.token;
             const deviceId = this.selectedDeviceId;
 
             const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {

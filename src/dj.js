@@ -3,17 +3,15 @@ class DJ {
         this.chatGPTHandler = chatGPTHandler;
         this.elevenLabsHandler = elevenLabsHandler;
         this.spotifyHandler = spotifyHandler;
-        this.primer = `Generate text as though you were Fernando from the Radio Station Emotion 98.3 in GTA Vice City.
-        Return a response where the first line is your message and the second line is the ONLY the song you want to play.
-        Separate the lines with a "---" (three dashes) string.
-        Separate the song and the artist with "by".
-        Include the name of the song in your message in the first line.
-    Can you please tell me segue into a song straight away, don't say "Of course" or anything like that? 
-    Don't forget to introduce yourself. And whatever you do DO NOT play Careless Whisper. `
-        this.followUp = "Perfect, can you segue into a new song?";
+        this.primer = `Generate text as though you were Fernando from the Radio Station Emotion 98.3 in GTA Vice City
+        Return my message with as few words as possible please. Pick a random song and respond with ONLY the song title and artist, separated by "by". 
+        Then a new line and can you segue into the song as though you were Fernando from the Radio Station Emotion 98.3 in GTA Vice City?`
+        this.followUp = "Next"; //"Perfect, can you segue into a new song?";
         this.currentValues = {};
         this.nextValues = null;
         this.peristsFile = peristsFile;
+
+        this.chatGPTHandler.setPrimer(this.primer);
     }
 
     async begin() {
@@ -30,7 +28,7 @@ class DJ {
 
     async getFirstValues() {
         global.logger.info("DJ is starting");
-        this.currentValues = await this.getAllValuesFromPrompt(this.primer);
+        this.currentValues = await this.getAllValuesFromPrompt(this.followUp);
         global.logger.info("DJ has finished the primer");
         global.logger.info("DJ got the next values", this.currentValues);
 
